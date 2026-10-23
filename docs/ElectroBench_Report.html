@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ElectroBench | ECE249 · ECE279 · ECE131 Project Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+    :root { --ink: #11110f; --muted: #57534b; --faint: #8e897e; --line: #11110f1f; --accent: #0e7490; --paper: #f5f2ea; --code: #1b1b19; --green: #2f7a46; }
+    @page { size: A4; margin: 15mm 14mm 16mm; }
+    @page :first { margin: 0; }
+    * { box-sizing: border-box; }
+    html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { margin: 0; color: var(--ink); font: 9.6pt/1.55 'Inter', -apple-system, 'Segoe UI', sans-serif; }
+    h1, h2, h3, h4 { letter-spacing: -0.02em; line-height: 1.2; break-after: avoid; }
+    h2 { margin: 0 0 12px; font-size: 20pt; font-weight: 800; letter-spacing: -0.035em; }
+    h3 { margin: 20px 0 6px; font-size: 12pt; font-weight: 700; }
+    h4 { margin: 14px 0 4px; font-size: 10pt; font-weight: 700; }
+    p { margin: 0 0 8px; }
+    a { color: var(--ink); }
+    ul, ol { margin: 4px 0 10px; padding-left: 18px; }
+    li { margin-bottom: 3px; }
+    code { padding: 0.5px 4px; background: #11110f0f; border-radius: 3px; font: 8pt 'JetBrains Mono', ui-monospace, monospace; }
+    b, strong { font-weight: 650; }
+
+    .chapter { break-before: page; }
+    .kicker { margin: 0 0 6px; color: var(--accent); font: 600 7.5pt/1 'JetBrains Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; }
+    .lead { max-width: 160mm; margin-bottom: 14px; color: var(--muted); font-size: 10.6pt; line-height: 1.55; }
+
+    table { width: 100%; margin: 8px 0 14px; border-collapse: collapse; font-size: 8.5pt; }
+    th, td { padding: 5.5px 7px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+    thead th { color: var(--muted); font: 600 7pt/1.3 'JetBrains Mono', monospace; letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1.5px solid var(--ink); }
+    tbody th { font-weight: 650; }
+    tr { break-inside: avoid; }
+    .t-topics tbody th { width: 27%; }
+    .t-topics td:last-child { width: 13%; color: var(--accent); font: 600 7.6pt 'JetBrains Mono', monospace; white-space: nowrap; }
+    .ok { color: var(--green); font-weight: 700; }
+
+    figure { margin: 6px 0 14px; break-inside: avoid; }
+    figure img { display: block; width: 100%; border: 1px solid var(--line); border-radius: 6px; }
+    figcaption { margin-top: 5px; color: var(--muted); font-size: 8pt; line-height: 1.45; }
+    figcaption b { color: var(--ink); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; align-items: start; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 10px; align-items: start; }
+    .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 10px; align-items: start; }
+    .fig-phone { max-width: 70mm; }
+    .fig-phone img { max-height: 125mm; object-fit: cover; object-position: top; }
+    .fig-tall img { max-height: 150mm; object-fit: cover; object-position: top; }
+    .fig-short img { max-height: 95mm; object-fit: cover; object-position: top; }
+
+    pre { margin: 6px 0 12px; padding: 10px 12px; overflow: hidden; color: #ecebe6; background: var(--code); border-radius: 6px; font: 7.4pt/1.5 'JetBrains Mono', ui-monospace, monospace; white-space: pre-wrap; break-inside: avoid; }
+    pre .file { display: block; margin-bottom: 6px; color: #7dd3e6; font-weight: 600; }
+    .walk { display: grid; grid-template-columns: 1.15fr 1fr; gap: 14px; align-items: start; break-inside: avoid; margin-bottom: 6px; }
+    .walk pre { margin-top: 0; }
+    .walk p, .walk li { font-size: 8.8pt; }
+    .tags { margin: 6px 0 0; }
+    .tag { display: inline-block; margin: 0 4px 4px 0; padding: 1.5px 7px; color: var(--accent); background: #0e749014; border-radius: 99px; font: 600 7pt 'JetBrains Mono', monospace; }
+
+    .note { margin: 8px 0 12px; padding: 9px 12px; background: var(--paper); border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; font-size: 9pt; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0 16px; }
+    .stat { padding: 12px; background: var(--paper); border-radius: 8px; }
+    .stat b { display: block; font-size: 19pt; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; }
+    .stat span { color: var(--muted); font-size: 8pt; }
+    .co-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0 14px; }
+    .co-card { padding: 10px 11px; background: var(--paper); border-radius: 8px; font-size: 8.4pt; break-inside: avoid; }
+    .co-card b { display: block; margin-bottom: 2px; color: var(--accent); font: 700 8.5pt 'JetBrains Mono', monospace; }
+    .co-card em { display: block; margin-top: 5px; color: var(--muted); font-style: normal; font-size: 7.8pt; }
+    .prac { padding: 12px 0 4px; border-top: 1.5px solid var(--ink); break-inside: avoid; }
+    .prac h4 { margin: 0 0 4px; }
+    .prac h4 span { color: var(--accent); font-family: 'JetBrains Mono', monospace; margin-right: 6px; }
+    .toc { columns: 2; column-gap: 14mm; margin-top: 10px; padding: 0; list-style: none; }
+    .toc li { display: flex; gap: 10px; margin-bottom: 9px; padding-bottom: 7px; border-bottom: 1px solid var(--line); break-inside: avoid; font-size: 10pt; font-weight: 600; }
+    .toc li span { color: var(--accent); font: 600 9pt 'JetBrains Mono', monospace; }
+    .toc li small { display: block; color: var(--muted); font-weight: 400; font-size: 8.2pt; }
+
+    /* cover */
+    .cover { position: relative; height: 297mm; padding: 18mm 16mm 16mm; overflow: hidden; color: #f2f0e9; background: #0d0d0c; break-after: page; }
+    .cover__top { display: flex; justify-content: space-between; color: #f2f0e999; font: 600 7.5pt/1 'JetBrains Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; }
+    .cover h1 { margin: 22mm 0 6mm; font-size: 62pt; font-weight: 800; letter-spacing: -0.06em; line-height: 0.9; }
+    .cover h1 span { color: var(--accent); }
+    .cover__sub { max-width: 140mm; margin: 0 0 10mm; color: #f2f0e9cc; font-size: 12.5pt; line-height: 1.5; }
+    .cover__shot { width: 100%; height: 92mm; object-fit: cover; object-position: top; border-radius: 8px; border: 1px solid #ffffff1f; }
+    .cover dl { position: absolute; left: 16mm; right: 16mm; bottom: 16mm; display: grid; grid-template-columns: 38mm 1fr 38mm 1fr; gap: 8px 10px; margin: 0; padding-top: 14px; border-top: 1px solid #f2f0e94d; font-size: 9pt; }
+    .cover dt { color: #f2f0e980; font: 600 7pt/1.8 'JetBrains Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; }
+    .cover dd { margin: 0; }
+    .cover a { color: #f2f0e9; }
+    .blank { display: inline-block; min-width: 40mm; border-bottom: 1px solid #f2f0e980; }
+
+    .diagram { margin: 6px 0 14px; padding: 12px; background: var(--paper); border-radius: 8px; break-inside: avoid; }
+    .diagram svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="cover">
+    <div class="cover__top"><span>ECE249 · ECE279 · ECE131</span><span>Project report</span></div>
+    <h1>Electro<span>Bench</span></h1>
+    <p class="cover__sub">An interactive workbench for basic electrical and electronics engineering. Every topic of the theory course is a working model you can change, and every lab experiment has a virtual bench whose readings fill in a printable lab record.</p>
+    <img class="cover__shot" src="images/lab-window.png" alt="">
+    <dl>
+        <dt>Student</dt><dd>Lukshya Singh Supyal</dd>
+        <dt>Registration no.</dt><dd><span class="blank">&nbsp;</span></dd>
+        <dt>Programme</dt><dd>B.Tech CSE, Semester 5</dd>
+        <dt>Courses</dt><dd>ECE249 Basic Electrical &amp; Electronics Engg. · ECE279 Lab · ECE131 (2026-27)</dd>
+        <dt>Live website</dt><dd><a href="https://lushadowx.github.io/ElectroBench/">lushadowx.github.io/ElectroBench</a></dd>
+        <dt>Source code</dt><dd><a href="https://github.com/LuShadowX/ElectroBench">github.com/LuShadowX/ElectroBench</a></dd>
+    </dl>
+</section>
+
+<!-- ============ CONTENTS ============ -->
+<section>
+    <p class="kicker">Contents</p>
+    <h2>What's in this report</h2>
+    <ol class="toc">
+        <li><span>01</span><div>Project overview<small>Idea, sections, numbers</small></div></li>
+        <li><span>02</span><div>How it's built<small>Architecture and files</small></div></li>
+        <li><span>03</span><div>Home and course map<small>Navigation and progress</small></div></li>
+        <li><span>04</span><div>ECE249 Unit 1<small>Electrical laws, semiconductors, BJT</small></div></li>
+        <li><span>05</span><div>ECE249 Unit 2<small>Arduino and sensors</small></div></li>
+        <li><span>06</span><div>ECE249 Unit 3<small>Number systems, gates, K-maps</small></div></li>
+        <li><span>07</span><div>ECE249 Unit 4<small>Combinational circuits</small></div></li>
+        <li><span>08</span><div>ECE249 Units 5 and 6<small>Flip-flops, registers, counters</small></div></li>
+        <li><span>09</span><div>ECE279 Lab<small>Seven experiments on the virtual bench</small></div></li>
+        <li><span>10</span><div>ECE131 (2026-27)<small>Theorems, AC, machines, op-amps, IoT</small></div></li>
+        <li><span>11</span><div>Syllabus and CO mapping<small>Every topic of all three courses</small></div></li>
+        <li><span>12</span><div>Code walkthrough<small>How the important parts work</small></div></li>
+        <li><span>13</span><div>Testing<small>What was checked and the results</small></div></li>
+        <li><span>14</span><div>Deployment and conclusion<small>GitHub Pages, what I learned</small></div></li>
+    </ol>
+    <div class="note" style="margin-top:14px">Every screenshot in this report was taken from ElectroBench while using it, with real readings taken on the virtual benches. Every code extract is copied from the source files, with file names and line numbers.</div>
+    <h3>Why one project for three courses</h3>
+    <p>ECE249 (theory) and ECE279 (its lab) are taught together and share most topics: the KVL experiment belongs to Unit 1, the diode experiment to Unit 1, the gate and adder experiments to Units 3 and 4, the JK experiment to Unit 5 and the Arduino experiment to Unit 2. ECE131 is the 2026-27 version of the same course. It keeps semiconductors and embedded systems, drops most of the digital part, and adds network theorems, AC circuits, machines, MOSFETs and op-amps. Building one workbench lets the theory page and the experiment for the same idea link to each other, and makes it possible to cover both versions of the syllabus.</p>
+</section>
+
+<!-- ============ 01 OVERVIEW ============ -->
+<section class="chapter">
+    <p class="kicker">01 · Project overview</p>
+    <h2>Learning electronics by changing it</h2>
+    <p class="lead">In a textbook a circuit is a fixed picture with one set of values. ElectroBench turns every circuit into something you can change: move a slider and the mesh currents, the diode curve, the filter's cut-off or the flip-flop's output react immediately. The lab experiments get a virtual bench with a power supply, multimeter, CRO and TTL chips, so the procedure can be practised before (or after) the real lab.</p>
+    <div class="stats">
+        <div class="stat"><b>12</b><span>topic pages</span></div>
+        <div class="stat"><b>7</b><span>lab experiments with virtual benches</span></div>
+        <div class="stat"><b>87</b><span>interactive screens (tabs)</span></div>
+        <div class="stat"><b>~5,300</b><span>lines of JavaScript, HTML and CSS</span></div>
+    </div>
+    <h3>Sections</h3>
+    <table>
+        <thead><tr><th>Section</th><th>Pages</th><th>Courses</th></tr></thead>
+        <tbody>
+            <tr><th>Electrical circuits</th><td>DC circuits and theorems · AC circuits · Electrical machines</td><td>ECE249 U1, ECE131 U-I to U-III</td></tr>
+            <tr><th>Electronic devices</th><td>Semiconductors and diodes · BJT and MOSFET · Op-amps and filters</td><td>ECE249 U1, ECE131 U-IV, U-V</td></tr>
+            <tr><th>Embedded systems</th><td>Arduino, sensors and IoT</td><td>ECE249 U2, ECE131 U-VI</td></tr>
+            <tr><th>Digital electronics</th><td>Number systems · Logic gates and K-maps · Combinational circuits · Latches and flip-flops · Registers and counters</td><td>ECE249 U3 to U6</td></tr>
+            <tr><th>ECE279 lab</th><td>Seven experiments, each with aim and theory, virtual bench, observations and result, viva questions, plus a printable lab record</td><td>ECE279</td></tr>
+            <tr><th>Course map</th><td>Every syllabus topic of the three courses with a link to the exact page and tab</td><td>All</td></tr>
+        </tbody>
+    </table>
+    <h3>What makes it different from a set of notes</h3>
+    <ul>
+        <li><b>The models are real calculations.</b> The DC page solves the network with nodal analysis, the diode bench solves the Shockley equation for the operating point, and the rectifier page simulates the capacitor charging and discharging in time.</li>
+        <li><b>Digital circuits are simulated at gate level with gate delays.</b> Every adder, multiplexer and flip-flop is a netlist of gates. Because each gate has a delay, a JK flip-flop with the clock held high really oscillates: the race-around condition is something you see, not just read.</li>
+        <li><b>Experiments produce a lab record.</b> Readings taken on the bench are saved and fill in the observation tables, the result is written from those readings, and the Lab record page prints all seven experiments as one file.</li>
+    </ul>
+    <h3>Technology</h3>
+    <p>Plain HTML, CSS and JavaScript (ES modules). There is no framework, no build step and no server. Drawings are SVG generated in code, the CRO screen is a canvas, and progress and readings are stored in the browser's local storage. The site is hosted on GitHub Pages.</p>
+</section>
+
+<!-- ============ 02 ARCHITECTURE ============ -->
+<section class="chapter">
+    <p class="kicker">02 · How it's built</p>
+    <h2>Architecture</h2>
+    <p class="lead">Each page is an ES module that is loaded only when it is opened. Pages share a small set of engines: a logic simulator, a schematic drawer, a plotter, a circuit-symbol kit and the experiment layout.</p>
+    <div class="diagram">
+        <svg viewBox="0 0 760 250" font-family="Inter, sans-serif" font-size="11">
+            <rect x="10" y="10" width="740" height="44" rx="10" fill="#0e7490"/><text x="380" y="37" text-anchor="middle" fill="#fff" font-weight="700">22 pages (ES modules, loaded on demand): DC · AC · Machines · Diodes · BJT · Op-amps · Arduino · Logic · … · Exp 1–7 · Lab record</text>
+            <rect x="10" y="64" width="740" height="40" rx="10" fill="#155e75"/><text x="380" y="89" text-anchor="middle" fill="#fff" font-weight="700">main.js: sidebar, router #/page/tab, course tags, progress</text>
+            <rect x="10" y="114" width="176" height="56" rx="10" fill="#f59e0b"/><text x="98" y="138" text-anchor="middle" fill="#fff" font-weight="700">logic.js</text><text x="98" y="156" text-anchor="middle" fill="#fff">gates with delays, K-map</text>
+            <rect x="198" y="114" width="176" height="56" rx="10" fill="#f59e0b"/><text x="286" y="138" text-anchor="middle" fill="#fff" font-weight="700">schematic.js</text><text x="286" y="156" text-anchor="middle" fill="#fff">netlist → live drawing</text>
+            <rect x="386" y="114" width="176" height="56" rx="10" fill="#f59e0b"/><text x="474" y="138" text-anchor="middle" fill="#fff" font-weight="700">plot.js · draw.js</text><text x="474" y="156" text-anchor="middle" fill="#fff">graphs, circuit symbols</text>
+            <rect x="574" y="114" width="176" height="56" rx="10" fill="#f59e0b"/><text x="662" y="138" text-anchor="middle" fill="#fff" font-weight="700">lab.js · ic.js</text><text x="662" y="156" text-anchor="middle" fill="#fff">experiment layout, pinouts</text>
+            <rect x="10" y="180" width="740" height="28" rx="10" fill="#475569"/><text x="380" y="199" text-anchor="middle" fill="#fff" font-weight="700">ui.js · page.js · store.js: DOM helpers, tabs, inputs, localStorage + event bus</text>
+            <rect x="10" y="216" width="740" height="28" rx="10" fill="#1e293b"/><text x="380" y="235" text-anchor="middle" fill="#fff" font-weight="700">The browser: DOM, SVG, Canvas, localStorage, window.print()</text>
+        </svg>
+    </div>
+    <h3>Files</h3>
+    <table>
+        <thead><tr><th>File</th><th>Job</th><th>Lines</th></tr></thead>
+        <tbody>
+            <tr><th><code>js/main.js</code></th><td>Sections, sidebar with progress ticks, router, course tags on every page</td><td>135</td></tr>
+            <tr><th><code>js/core/logic.js</code></th><td>Gate-level simulator with unit delays, Boolean parser, Quine–McCluskey minimisation, SOP circuit builder</td><td>270</td></tr>
+            <tr><th><code>js/core/schematic.js</code></th><td>Lays out any netlist by logic depth and draws it, colouring wires that carry 1</td><td>204</td></tr>
+            <tr><th><code>js/core/plot.js</code></th><td>SVG graphs with linear or log axes, reference lines, markers and a hover readout</td><td>108</td></tr>
+            <tr><th><code>js/core/draw.js</code></th><td>Circuit symbols: resistor, sources, diode, LED, Zener, capacitor, inductor, op-amp</td><td>136</td></tr>
+            <tr><th><code>js/core/lab.js</code></th><td>The four-tab experiment layout and saved observations</td><td>71</td></tr>
+            <tr><th><code>js/core/ic.js</code></th><td>Pinouts of the 7400, 7402, 7408, 7410, 7432 and 7486</td><td>35</td></tr>
+            <tr><th><code>js/pages/dc.js</code></th><td>Ohm, Kirchhoff, dividers, series–parallel reducer, star–delta, mesh and nodal, theorems</td><td>308</td></tr>
+            <tr><th><code>js/pages/semis.js</code></th><td>Doping, PN junction, V-I, Zener, varactor, rectifier simulation, testing</td><td>281</td></tr>
+            <tr><th><code>js/pages/sequential.js</code></th><td>Gate-level latches, flip-flops with timing diagrams, conversion solver</td><td>234</td></tr>
+            <tr><th><code>js/pages/lab1.js</code> … <code>lab7.js</code></th><td>The seven experiments: bench, observation tables, result, viva</td><td>—</td></tr>
+            <tr><th><code>css/style.css</code>, <code>css/pages.css</code></th><td>Layout, components, circuit and instrument styles, print styles for the lab record</td><td>—</td></tr>
+        </tbody>
+    </table>
+    <h3>One idea, many pages</h3>
+    <p>Because every digital circuit is just a netlist (a list of gates and what feeds each input), the same simulator and the same schematic drawer power the gate page, the universal-gate page, all combinational circuits, the K-map solver's generated circuit, the latches and Experiments 4, 5 and 6. The circuit drawn on the screen is the circuit that is simulated, so they cannot disagree.</p>
+</section>
+
+<!-- ============ 03 HOME + MAP ============ -->
+<section class="chapter">
+    <p class="kicker">03 · Home and course map</p>
+    <h2>Finding your way</h2>
+    <p class="lead">The sidebar groups pages the way the syllabus does and ticks each page once it has been opened. Every page shows which course units it covers as tags in the top bar, for example "ECE131 U-IV · ECE249 U-1 · Lab 3" on the semiconductor page.</p>
+    <figure class=""><img src="images/home.png" alt=""><figcaption><b>Fig. 1</b> · <b>Home.</b> Sections, the three courses, progress, and a "continue" button that opens the first page not yet visited.</figcaption></figure>
+    <figure class="fig-tall"><img src="images/map249.png" alt=""><figcaption><b>Fig. 2</b> · <b>Course map, ECE249 tab.</b> Each syllabus topic links straight to the page and tab that covers it, with a line on what you can do there. The full mapping is in chapter 11.</figcaption></figure>
+</section>
+
+<!-- ============ 04 UNIT 1 ============ -->
+<section class="chapter">
+    <p class="kicker">04 · ECE249 Unit 1</p>
+    <h2>Electrical laws and semiconductors</h2>
+    <p class="lead">Unit 1 covers Ohm's law, Kirchhoff's laws, divider rules, intrinsic and extrinsic semiconductors, the PN junction diode and its V-I characteristic, rectifiers, the diode as a switch, and BJT construction, modes and characteristics.</p>
+    <figure class="fig-short"><img src="images/dc-kirchhoff.png" alt=""><figcaption><b>Fig. 3</b> · <b>KCL and KVL.</b> A two-source network solved by nodal analysis. Change any source or resistor and the currents into node A and the voltages around each loop are added up live, so you can see both laws hold for every value.</figcaption></figure>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/dc-dividers.png" alt=""><figcaption><b>Fig. 4</b> · <b>Divider rules.</b> Voltage and current division with the formula filled in with the current values.</figcaption></figure>
+        <figure class="fig-short"><img src="images/s-doping.png" alt=""><figcaption><b>Fig. 5</b> · <b>Intrinsic and extrinsic.</b> A silicon lattice. Add phosphorus (N-type) or boron (P-type) and the free electrons or holes appear.</figcaption></figure>
+    </div>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/s-junction.png" alt=""><figcaption><b>Fig. 6</b> · <b>PN junction.</b> The depletion region narrows in forward bias and widens in reverse bias.</figcaption></figure>
+        <figure class="fig-short"><img src="images/s-vi.png" alt=""><figcaption><b>Fig. 7</b> · <b>V-I characteristic.</b> Calculated from the Shockley equation; silicon and germanium knees compared.</figcaption></figure>
+    </div>
+    <figure class="fig-short"><img src="images/s-rectifiers.png" alt=""><figcaption><b>Fig. 8</b> · <b>Rectifiers.</b> Half wave, centre-tap and bridge, simulated in time. Add a filter capacitor and the ripple and DC level are measured from the simulated waveform.</figcaption></figure>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/s-switch.png" alt=""><figcaption><b>Fig. 9</b> · <b>Diode as a switch, and testing.</b> ON and OFF states, and how to test a diode and a BJT with a multimeter.</figcaption></figure>
+        <figure class="fig-short"><img src="images/t-construction.png" alt=""><figcaption><b>Fig. 10</b> · <b>BJT construction and modes.</b> NPN and PNP, and the four operating modes from the two junction biases.</figcaption></figure>
+    </div>
+    <figure class="fig-short"><img src="images/t-characteristics.png" alt=""><figcaption><b>Fig. 11</b> · <b>CE characteristics.</b> Output curves for several base currents (with the Early effect), a load line from Vcc and Rc, and the Q-point moving as you change the base current.</figcaption></figure>
+</section>
+
+<!-- ============ 05 UNIT 2 ============ -->
+<section class="chapter">
+    <p class="kicker">05 · ECE249 Unit 2</p>
+    <h2>Arduino and sensors</h2>
+    <p class="lead">Unit 2 introduces analog and digital signals, the Arduino Uno board and its pins, and four sensors: the HC-SR04 ultrasonic sensor, DHT11/DHT22, LDR and IR.</p>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/a-signals.png" alt=""><figcaption><b>Fig. 12</b> · <b>Analog vs digital.</b> A sine wave sampled and quantised by a 10-bit ADC, as analogRead does.</figcaption></figure>
+        <figure class="fig-short"><img src="images/a-board.png" alt=""><figcaption><b>Fig. 13</b> · <b>Arduino Uno.</b> Click any pin on the drawn board to see what it does (digital, PWM, analog, power, serial).</figcaption></figure>
+    </div>
+    <figure class="fig-short"><img src="images/a-sensors.png" alt=""><figcaption><b>Fig. 14</b> · <b>Sensors.</b> The HC-SR04 tab: trigger and echo pulses for the chosen distance, the distance formula, the sketch and the serial monitor output. The DHT tab shows the 40-bit packet with its checksum; LDR and IR tabs show the divider and digital output.</figcaption></figure>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/a-pwm.png" alt=""><figcaption><b>Fig. 15</b> · <b>PWM.</b> Duty cycle and the average voltage it gives, analogWrite values 0–255.</figcaption></figure>
+        <figure class="fig-short"><img src="images/a-embedded.png" alt=""><figcaption><b>Fig. 16</b> · <b>Embedded systems and IoT.</b> Microprocessor vs microcontroller, and IoT uses in industry, healthcare, agriculture, vehicles and the smart grid.</figcaption></figure>
+    </div>
+</section>
+
+<!-- ============ 06 UNIT 3 ============ -->
+<section class="chapter">
+    <p class="kicker">06 · ECE249 Unit 3</p>
+    <h2>Number systems, logic gates and K-maps</h2>
+    <p class="lead">Unit 3 covers binary, octal, decimal and hexadecimal conversion, 1's and 2's complements, BCD, Excess-3 and Gray code, logic gates, universal gates, Boolean laws, SOP and POS forms and Karnaugh maps.</p>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/n-convert.png" alt=""><figcaption><b>Fig. 17</b> · <b>Conversions.</b> Every step of the division or multiplication method is shown, including fractions.</figcaption></figure>
+        <figure class="fig-short"><img src="images/n-complements.png" alt=""><figcaption><b>Fig. 18</b> · <b>Complements.</b> Subtraction with 1's complement (end-around carry) and 2's complement.</figcaption></figure>
+    </div>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/n-codes.png" alt=""><figcaption><b>Fig. 19</b> · <b>Codes.</b> BCD, Excess-3 and Gray code for any number, with the XOR steps for Gray.</figcaption></figure>
+        <figure class="fig-short"><img src="images/l-universal.png" alt=""><figcaption><b>Fig. 20</b> · <b>Universal gates.</b> OR built only from NAND gates. Click the switches: green wires carry logic 1.</figcaption></figure>
+    </div>
+    <figure class="fig-short"><img src="images/l-gates.png" alt=""><figcaption><b>Fig. 21</b> · <b>Logic gates.</b> All seven gates as live circuits with their IC numbers and truth tables.</figcaption></figure>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/l-laws.png" alt=""><figcaption><b>Fig. 22</b> · <b>Boolean laws.</b> Type any expression: the truth table, canonical SOP and POS are generated.</figcaption></figure>
+        <figure class="fig-short"><img src="images/l-kmap.png" alt=""><figcaption><b>Fig. 23</b> · <b>K-map solver.</b> Click cells (1, 0 or don't care). The map is minimised with the Quine–McCluskey method, the groups are drawn, and the minimised circuit is built and simulated.</figcaption></figure>
+    </div>
+</section>
+
+<!-- ============ 07 UNIT 4 ============ -->
+<section class="chapter">
+    <p class="kicker">07 · ECE249 Unit 4</p>
+    <h2>Combinational circuits</h2>
+    <p class="lead">Unit 4 covers half and full adders and subtractors, the 4:1 multiplexer, 1:4 demultiplexer, 2:4 decoder, 4:2 encoder and 1-bit and 2-bit comparators. Each one here is a gate-level netlist simulated by the same engine.</p>
+    <figure class="fig-short"><img src="images/c-adders.png" alt=""><figcaption><b>Fig. 24</b> · <b>Full adder.</b> Built from two half adders and an OR gate, exactly as wired in Experiment 5. Here A = 1, B = 0, Cin = 1 gives S = 0, Cout = 1.</figcaption></figure>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/c-ripple.png" alt=""><figcaption><b>Fig. 25</b> · <b>4-bit ripple-carry adder.</b> Four full adders chained, carry rippling from stage to stage.</figcaption></figure>
+        <figure class="fig-short"><img src="images/c-subtractors.png" alt=""><figcaption><b>Fig. 26</b> · <b>Subtractors.</b> Difference and borrow circuits.</figcaption></figure>
+    </div>
+    <figure class="fig-short"><img src="images/c-mux.png" alt=""><figcaption><b>Fig. 27</b> · <b>MUX and DEMUX.</b> The select lines route one of four inputs to the output.</figcaption></figure>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/c-codec.png" alt=""><figcaption><b>Fig. 28</b> · <b>Decoder and encoder.</b> 2:4 decoder and 4:2 encoder.</figcaption></figure>
+        <figure class="fig-short"><img src="images/c-comparators.png" alt=""><figcaption><b>Fig. 29</b> · <b>Comparators.</b> A &gt; B, A = B and A &lt; B outputs for 1-bit and 2-bit numbers.</figcaption></figure>
+    </div>
+</section>
+
+<!-- ============ 08 UNITS 5-6 ============ -->
+<section class="chapter">
+    <p class="kicker">08 · ECE249 Units 5 and 6</p>
+    <h2>Flip-flops, registers and counters</h2>
+    <p class="lead">Unit 5 covers SR latches with NOR and NAND gates, the D latch, SR, JK, D and T flip-flops, the race-around condition, the master–slave JK and flip-flop conversions. Unit 6 covers shift registers and counters.</p>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/q-latches.png" alt=""><figcaption><b>Fig. 30</b> · <b>SR latch from NOR gates.</b> Two cross-coupled gates with real gate delays. The timing diagram records each change.</figcaption></figure>
+        <figure class="fig-short"><img src="images/q-race.png" alt=""><figcaption><b>Fig. 31</b> · <b>Race-around.</b> JK from NAND gates with J = K = 1 and the clock held high: Q keeps toggling, gate delay by gate delay.</figcaption></figure>
+    </div>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/q-flipflops.png" alt=""><figcaption><b>Fig. 32</b> · <b>Flip-flops.</b> Edge-triggered SR, JK, D and T with timing diagrams, and a master–slave option.</figcaption></figure>
+        <figure class="fig-short"><img src="images/q-conversions.png" alt=""><figcaption><b>Fig. 33</b> · <b>Conversions.</b> Pick any two flip-flops. The excitation table, K-maps and input equations are worked out (e.g. SR → JK gives S = JQ', R = KQ).</figcaption></figure>
+    </div>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/r-shift.png" alt=""><figcaption><b>Fig. 34</b> · <b>Shift registers.</b> SISO, SIPO, PISO and PIPO, clocked bit by bit.</figcaption></figure>
+        <figure class="fig-short"><img src="images/r-counters.png" alt=""><figcaption><b>Fig. 35</b> · <b>Counters.</b> Up, down, mod-N, ring and Johnson. Switching to ripple mode shows the glitch states that a synchronous counter avoids.</figcaption></figure>
+    </div>
+</section>
+
+<!-- ============ 09 LAB ============ -->
+<section class="chapter">
+    <p class="kicker">09 · ECE279 Lab</p>
+    <h2>Seven experiments on a virtual bench</h2>
+    <p class="lead">Every experiment follows the format of a lab file. <b>Aim and theory</b> gives the aim, apparatus, theory, procedure and precautions. <b>Virtual bench</b> is where the readings are taken. <b>Observations and result</b> fills the tables from those readings and writes the result. <b>Viva questions</b> lists questions asked in the viva, with answers.</p>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/lab1-aim.png" alt=""><figcaption><b>Fig. 36</b> · <b>Aim and theory tab</b> of Experiment 1.</figcaption></figure>
+        <figure class="fig-short"><img src="images/lab-viva.png" alt=""><figcaption><b>Fig. 37</b> · <b>Viva tab</b> of Experiment 6, one answer opened.</figcaption></figure>
+    </div>
+
+    <div class="prac"><h4><span>EXP 1</span>Introduction to components and instruments</h4>
+        <p>A component gallery (passive and active), a colour-code reader where you choose the bands and "measure" the resistor (the reading has a realistic tolerance error), a breadboard where clicking a hole highlights everything connected to it, a regulated supply with a DMM, and a function generator connected to a CRO with volts/div, time/div and Autoset. Readings go into three tables.</p></div>
+    <figure class="fig-tall"><img src="images/lab1-bench.png" alt=""><figcaption><b>Fig. 38</b> · <b>Experiment 1 bench.</b> Colour code, breadboard, supply and DMM, function generator and CRO.</figcaption></figure>
+
+    <div class="prac"><h4><span>EXP 2</span>KVL voltage hunt</h4>
+        <p>A T-network on a 10 V supply: R1 in series with R2 ∥ R3, values chosen from E12. The actual resistors differ from their marked values by up to ±4%, and the meter has a little noise, so the measured loop sums come out close to zero but not exactly, like in the real lab. Place the red and black probes on nodes to measure any voltage.</p></div>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/lab2-bench.png" alt=""><figcaption><b>Fig. 39</b> · <b>Bench.</b> Probes on the nodes, the DMM reading and the four measurements.</figcaption></figure>
+        <figure class="fig-short"><img src="images/lab2-obs.png" alt=""><figcaption><b>Fig. 40</b> · <b>Observations.</b> Voltage drops (theory vs measured) and the loop sums.</figcaption></figure>
+    </div>
+
+    <div class="prac"><h4><span>EXP 3</span>Diode V-I characteristics (1N4007)</h4>
+        <p>The supply drives the diode through 100 Ω. The diode voltage and current are the solution of the Shockley equation with the loop equation, found by bisection. Readings can be taken one at a time or as a full set; the graph, knee voltage, static and dynamic resistance are worked out from the recorded points.</p></div>
+    <figure class=""><img src="images/lab3-bench.png" alt=""><figcaption><b>Fig. 41</b> · <b>Bench.</b> Forward-bias circuit with voltmeter and milliammeter, and the V-I graph drawn from the readings: forward in quadrant I (mA) and reverse in quadrant III (nA).</figcaption></figure>
+    <figure class="fig-tall"><img src="images/lab3-obs.png" alt=""><figcaption><b>Fig. 42</b> · <b>Observations and result.</b> Forward and reverse tables, the graph and the calculations, all from the recorded readings.</figcaption></figure>
+
+    <div class="prac"><h4><span>EXP 4</span>Universal gates (7400, 7402)</h4>
+        <p>NOT, AND and OR built from NAND only and from NOR only. For each circuit the IC pinout is drawn with the pins you wire highlighted and labelled, next to a connection table and the live gate circuit. "Record this row" saves the LED state for the current switches; the observation table marks each row ✓ or ✗ against the expected value.</p></div>
+    <figure class="fig-short"><img src="images/lab4-bench.png" alt=""><figcaption><b>Fig. 43</b> · <b>Bench.</b> OR using NAND: A to pins 1 and 2, B to pins 4 and 5, pins 3 and 6 to pins 9 and 10, pin 8 to the LED. Note that the 7402 has its outputs on pins 1, 4, 10 and 13, which the drawing shows when you switch to the NOR circuits.</figcaption></figure>
+    <figure class="fig-tall"><img src="images/lab4-obs.png" alt=""><figcaption><b>Fig. 44</b> · <b>Observations.</b> All six circuits verified.</figcaption></figure>
+</section>
+
+<section class="chapter">
+    <p class="kicker">09 · ECE279 Lab (continued)</p>
+    <div class="prac"><h4><span>EXP 5</span>Half and full adder (7486, 7408, 7432)</h4>
+        <p>The pin wiring of all three chips for the full adder: gate 1 of the 7486 makes A⊕B, gate 2 adds Cin; the two AND gates of the 7408 make AB and Cin(A⊕B); the 7432 ORs them into Cout.</p></div>
+    <figure class="fig-tall"><img src="images/lab5-bench.png" alt=""><figcaption><b>Fig. 45</b> · <b>Bench.</b> Full adder pinouts and live circuit.</figcaption></figure>
+    <figure class="fig-short"><img src="images/lab5-obs.png" alt=""><figcaption><b>Fig. 46</b> · <b>Observations.</b> Both truth tables verified, observed against expected.</figcaption></figure>
+
+    <div class="prac"><h4><span>EXP 6</span>JK flip-flop using NAND gates (7400, 7410)</h4>
+        <p>The steering gates are 3-input NANDs from the 7410 (J, CLK, Q' and K, CLK, Q), and the latch is two NANDs of the 7400. A <b>short clock pulse</b> (two gate delays) lets the flip-flop change exactly once, so the truth table can be recorded: hold, reset, set, toggle. <b>Holding the clock high</b> with J = K = 1 shows the race-around condition and records how many times Q changed.</p></div>
+    <figure class="fig-tall"><img src="images/lab6-bench.png" alt=""><figcaption><b>Fig. 47</b> · <b>Bench.</b> Gate-level circuit, a timing diagram with one column per gate delay after a sequence of set, hold, reset and two toggles. The pin connections of both ICs are drawn below it on the same tab.</figcaption></figure>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/lab6-race.png" alt=""><figcaption><b>Fig. 48</b> · <b>Race-around.</b> Clock held high with J = K = 1: Q oscillates.</figcaption></figure>
+        <figure class="fig-short"><img src="images/lab6-obs.png" alt=""><figcaption><b>Fig. 49</b> · <b>Observations.</b> The truth table from the recorded pulses and the race-around observation.</figcaption></figure>
+    </div>
+</section>
+
+<section>
+    <div class="prac"><h4><span>EXP 7</span>Arduino projects</h4>
+        <p>Three sense → decide → act projects with the full sketch, the connection table, a block diagram, the serial monitor and a picture that follows the same logic as the code: an <b>automatic street light</b> (LDR on A0, threshold 300, relay on pin 7, status LED on 13), a <b>temperature-controlled vent</b> (DHT11 on pin 2, servo on pin 5 opening to 90° above 28 °C) and a <b>parking distance alarm</b> (HC-SR04 trig 9 / echo 10, buzzer on pin 8 below 20 cm).</p></div>
+    <figure class="fig-short"><img src="images/lab7-light.png" alt=""><figcaption><b>Fig. 50</b> · <b>Street light.</b> In the dark the ADC value falls below 300 and the lamp switches on.</figcaption></figure>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/lab7-vent.png" alt=""><figcaption><b>Fig. 51</b> · <b>Temperature vent.</b> 32 °C: the servo turns to 90°.</figcaption></figure>
+        <figure class="fig-short"><img src="images/lab7-park.png" alt=""><figcaption><b>Fig. 52</b> · <b>Parking alarm.</b> 14 cm: buzzer and LED on.</figcaption></figure>
+    </div>
+    <figure class="fig-short"><img src="images/lab7-obs.png" alt=""><figcaption><b>Fig. 53</b> · <b>Observations.</b> Readings on both sides of each threshold.</figcaption></figure>
+    <h3>Lab record</h3>
+    <p>The Lab record page puts the aim, apparatus, observation tables and result of all seven experiments into one document. It has print styles, so "Print / save as PDF" gives a clean lab file without the sidebar.</p>
+    <figure class="fig-short"><img src="images/record.png" alt=""><figcaption><b>Fig. 54</b> · <b>Lab record</b> (top part): the index shows which experiments have readings, followed by each experiment's aim, apparatus, tables and result.</figcaption></figure>
+</section>
+
+<!-- ============ 10 ECE131 ============ -->
+<section class="chapter">
+    <p class="kicker">10 · ECE131 (2026-27)</p>
+    <h2>The newer syllabus</h2>
+    <p class="lead">ECE131 keeps semiconductors and embedded systems from ECE249 and adds deeper circuit analysis, AC and three-phase circuits, electrical machines, the MOSFET, op-amps and filters. These pages cover those units.</p>
+    <h3>Unit I · DC circuits</h3>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/dc-stardelta.png" alt=""><figcaption><b>Fig. 55</b> · <b>Star–delta.</b> Convert in either direction with the formulas filled in.</figcaption></figure>
+        <figure class="fig-short"><img src="images/dc-mesh.png" alt=""><figcaption><b>Fig. 56</b> · <b>Mesh and nodal analysis.</b> The equations written out and solved, plus dependent and independent sources.</figcaption></figure>
+    </div>
+    <figure class="fig-tall"><img src="images/dc-theorems.png" alt=""><figcaption><b>Fig. 57</b> · <b>Theorems.</b> Thevenin, Norton, superposition and maximum power transfer on the same network, so the answers can be compared. The power curve peaks where RL = Rth.</figcaption></figure>
+    <h3>Unit II · AC circuits</h3>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/ac-waveform.png" alt=""><figcaption><b>Fig. 58</b> · <b>AC waveform.</b> Amplitude, phase difference, RMS and average values.</figcaption></figure>
+        <figure class="fig-short"><img src="images/ac-series.png" alt=""><figcaption><b>Fig. 59</b> · <b>RL, RC and RLC.</b> Impedance, phasor diagram, power factor and real, reactive and apparent power.</figcaption></figure>
+    </div>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/ac-resonance.png" alt=""><figcaption><b>Fig. 60</b> · <b>Resonance.</b> Current against frequency; f0, bandwidth and Q.</figcaption></figure>
+        <figure class="fig-short"><img src="images/ac-threephase.png" alt=""><figcaption><b>Fig. 61</b> · <b>Three-phase.</b> Star and delta, line and phase relations.</figcaption></figure>
+    </div>
+</section>
+
+<section class="chapter">
+    <p class="kicker">10 · ECE131 (continued)</p>
+    <h3>Unit III · Electrical machines</h3>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/m-transformer.png" alt=""><figcaption><b>Fig. 62</b> · <b>Transformer.</b> Mutual induction with animated flux, turns ratio, and what happens on DC; auto- and instrument transformers.</figcaption></figure>
+        <figure class="fig-short"><img src="images/m-dcmotor.png" alt=""><figcaption><b>Fig. 63</b> · <b>DC motor.</b> Working principle, types, starting and speed control (N ∝ (V − IaRa)/Φ).</figcaption></figure>
+    </div>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/m-induction.png" alt=""><figcaption><b>Fig. 64</b> · <b>Induction motor.</b> The rotating field of three phases, slip, single- and three-phase motors.</figcaption></figure>
+        <figure class="fig-short"><img src="images/m-fleming.png" alt=""><figcaption><b>Fig. 65</b> · <b>Fleming's rules.</b> Set the field and current directions; the force comes from the cross product.</figcaption></figure>
+    </div>
+    <h3>Unit IV · Semiconductor devices</h3>
+    <div class="grid3">
+        <figure class="fig-short"><img src="images/s-zener.png" alt=""><figcaption><b>Fig. 66</b> · <b>Zener.</b> Regulator with line and load changes.</figcaption></figure>
+        <figure class="fig-short"><img src="images/s-varactor.png" alt=""><figcaption><b>Fig. 67</b> · <b>Varactor.</b> Capacitance falls with reverse voltage.</figcaption></figure>
+        <figure class="fig-short"><img src="images/t-mosfet.png" alt=""><figcaption><b>Fig. 68</b> · <b>MOSFET.</b> Symbols and square-law characteristics.</figcaption></figure>
+    </div>
+    <figure class="fig-short"><img src="images/t-switch.png" alt=""><figcaption><b>Fig. 69</b> · <b>BJT as a switch</b>, with the base resistor calculation for saturation.</figcaption></figure>
+</section>
+
+<section class="chapter">
+    <p class="kicker">10 · ECE131 (continued)</p>
+    <h3>Unit V · Filters and operational amplifiers</h3>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/o-properties.png" alt=""><figcaption><b>Fig. 70</b> · <b>Op-amp properties.</b> Ideal vs 741, virtual ground.</figcaption></figure>
+        <figure class="fig-short"><img src="images/o-configs.png" alt=""><figcaption><b>Fig. 71</b> · <b>Configurations.</b> Inverting, non-inverting, follower, adder and subtractor, with saturation at ±13.5 V.</figcaption></figure>
+    </div>
+    <div class="grid2">
+        <figure class="fig-short"><img src="images/o-integrator.png" alt=""><figcaption><b>Fig. 72</b> · <b>Integrator and differentiator.</b> Square in, triangle out (and the reverse).</figcaption></figure>
+        <figure class="fig-short"><img src="images/o-filters.png" alt=""><figcaption><b>Fig. 73</b> · <b>Filters.</b> Low-, high-, band-pass and band-stop on a log frequency axis, passive or active.</figcaption></figure>
+    </div>
+    <figure class="fig-short"><img src="images/o-comparator.png" alt=""><figcaption><b>Fig. 74</b> · <b>Comparator and ABS.</b> The comparator switches when the input crosses Vref. Below, an anti-lock braking simulation: the comparator watches wheel slip and releases the brake briefly whenever the wheel starts to lock.</figcaption></figure>
+    <h3>Unit VI · Embedded systems and IoT</h3>
+    <p>Covered by the Arduino page (Fig. 13, 14 and 16) and Experiment 7.</p>
+</section>
+
+<!-- ============ 11 MAPPING ============ -->
+<section class="chapter">
+    <p class="kicker">11 · Syllabus and CO mapping</p>
+    <h2>Every topic, every course</h2>
+    <p class="lead">The tables below list every topic from the ECE249 unit notes, every ECE279 practical and every line of the ECE131 2026-27 syllabus, with the place in ElectroBench that covers it.</p>
+    <h3>ECE249 · Basic Electrical and Electronics Engineering</h3>
+    <table class="t-topics">
+        <thead><tr><th>Syllabus topic</th><th>Where in ElectroBench</th><th>Unit</th></tr></thead>
+        <tbody>
+            <tr><th>Ohm's law, KCL, KVL, voltage and current divider rules</th><td>DC circuits: Basics, KCL &amp; KVL, Divider rules (Fig. 3, 4); Exp 2</td><td>Unit 1</td></tr>
+            <tr><th>Intrinsic and extrinsic semiconductors</th><td>Semiconductors: Doping (Fig. 5)</td><td>Unit 1</td></tr>
+            <tr><th>PN junction diode, V-I characteristics</th><td>Semiconductors: PN junction, V-I curve (Fig. 6, 7); Exp 3</td><td>Unit 1</td></tr>
+            <tr><th>Rectifiers: half wave, full wave, bridge</th><td>Semiconductors: Rectifiers (Fig. 8)</td><td>Unit 1</td></tr>
+            <tr><th>Diode as a switch</th><td>Semiconductors: Switch &amp; testing (Fig. 9)</td><td>Unit 1</td></tr>
+            <tr><th>BJT construction, types, modes, CE characteristics</th><td>BJT &amp; MOSFET: Construction, CE characteristics (Fig. 10, 11)</td><td>Unit 1</td></tr>
+            <tr><th>Analog and digital signals</th><td>Arduino: Analog vs digital (Fig. 12)</td><td>Unit 2</td></tr>
+            <tr><th>Arduino Uno board and pins</th><td>Arduino: Arduino Uno (Fig. 13)</td><td>Unit 2</td></tr>
+            <tr><th>HC-SR04, DHT11/DHT22, LDR, IR sensors</th><td>Arduino: Sensors (Fig. 14); Exp 7</td><td>Unit 2</td></tr>
+            <tr><th>Number systems and conversions</th><td>Number systems: Conversions (Fig. 17)</td><td>Unit 3</td></tr>
+            <tr><th>1's and 2's complement</th><td>Number systems: Complements (Fig. 18)</td><td>Unit 3</td></tr>
+            <tr><th>BCD, Excess-3, Gray code</th><td>Number systems: Codes (Fig. 19)</td><td>Unit 3</td></tr>
+            <tr><th>Logic gates, universal gates</th><td>Logic: Gates, Universal gates (Fig. 21, 20); Exp 4</td><td>Unit 3</td></tr>
+            <tr><th>Boolean laws, SOP and POS</th><td>Logic: Boolean laws (Fig. 22)</td><td>Unit 3</td></tr>
+            <tr><th>Karnaugh maps</th><td>Logic: K-map solver (Fig. 23)</td><td>Unit 3</td></tr>
+            <tr><th>Half and full adder, half and full subtractor</th><td>Combinational: Adders, 4-bit adder, Subtractors (Fig. 24, 25, 26); Exp 5</td><td>Unit 4</td></tr>
+            <tr><th>MUX 4:1, DEMUX 1:4</th><td>Combinational: MUX &amp; DEMUX (Fig. 27)</td><td>Unit 4</td></tr>
+            <tr><th>Decoder 2:4, encoder 4:2</th><td>Combinational: Decoder &amp; encoder (Fig. 28)</td><td>Unit 4</td></tr>
+            <tr><th>1-bit and 2-bit comparators</th><td>Combinational: Comparators (Fig. 29)</td><td>Unit 4</td></tr>
+            <tr><th>SR latch (NOR, NAND), D latch</th><td>Latches &amp; flip-flops: Latches (Fig. 30)</td><td>Unit 5</td></tr>
+            <tr><th>SR, JK, D, T flip-flops</th><td>Latches &amp; flip-flops: Flip-flops (Fig. 32); Exp 6</td><td>Unit 5</td></tr>
+            <tr><th>Race-around condition, master–slave JK</th><td>Latches (Fig. 31), Flip-flops; Exp 6 (Fig. 48)</td><td>Unit 5</td></tr>
+            <tr><th>Flip-flop conversions</th><td>Latches &amp; flip-flops: Conversions (Fig. 33)</td><td>Unit 5</td></tr>
+            <tr><th>Shift registers SISO, SIPO, PISO, PIPO</th><td>Registers &amp; counters: Shift registers (Fig. 34)</td><td>Unit 6</td></tr>
+            <tr><th>Asynchronous and synchronous counters, up/down, mod-N, ring, Johnson</th><td>Registers &amp; counters: Counters (Fig. 35)</td><td>Unit 6</td></tr>
+        </tbody>
+    </table>
+    <h3>ECE279 · Laboratory</h3>
+    <table class="t-topics">
+        <thead><tr><th>Practical</th><th>Virtual bench in ElectroBench</th><th>Linked theory</th></tr></thead>
+        <tbody>
+            <tr><th>1. Introduction to components and instruments</th><td>Gallery, colour code, breadboard, RPS + DMM, function generator + CRO (Fig. 38)</td><td>U1</td></tr>
+            <tr><th>2. KVL voltage hunt</th><td>T-network with probes and loop sums (Fig. 39, 40)</td><td>U1</td></tr>
+            <tr><th>3. Diode V-I characteristics</th><td>1N4007 forward and reverse, knee, static and dynamic resistance (Fig. 41, 42)</td><td>U1</td></tr>
+            <tr><th>4. Universal gates</th><td>7400 and 7402 pin wiring, six circuits (Fig. 43, 44)</td><td>U3</td></tr>
+            <tr><th>5. Half and full adder</th><td>7486 + 7408 + 7432 pin wiring (Fig. 45, 46)</td><td>U4</td></tr>
+            <tr><th>6. JK flip-flop using NAND gates</th><td>7400 + 7410, short pulse vs held clock (Fig. 47, 48, 49)</td><td>U5</td></tr>
+            <tr><th>7. Arduino projects with sensors</th><td>Street light, temperature vent, parking alarm (Fig. 50, 51, 52)</td><td>U2</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section class="chapter">
+    <p class="kicker">11 · Syllabus and CO mapping (continued)</p>
+    <h3>ECE131 · Basic Electrical and Electronics Engineering (session 2026-27)</h3>
+    <table class="t-topics">
+        <thead><tr><th>Syllabus topic</th><th>Where in ElectroBench</th><th>Unit / CO</th></tr></thead>
+        <tbody>
+            <tr><th>R, L, C, voltage, current, power and energy; Ohm's law; Kirchhoff's laws</th><td>DC: Basics, KCL &amp; KVL (Fig. 3)</td><td>I · CO1, CO2</td></tr>
+            <tr><th>Series and parallel simplification, voltage and current division</th><td>DC: Series–parallel, Divider rules (Fig. 4)</td><td>I · CO2</td></tr>
+            <tr><th>Star–delta transformation; dependent and independent sources</th><td>DC: Star–delta, Mesh &amp; nodal (Fig. 55, 56)</td><td>I · CO2</td></tr>
+            <tr><th>Mesh and nodal analysis</th><td>DC: Mesh &amp; nodal (Fig. 56)</td><td>I · CO2</td></tr>
+            <tr><th>Thevenin, Norton, maximum power transfer, superposition</th><td>DC: Theorems (Fig. 57)</td><td>I · CO2</td></tr>
+            <tr><th>Amplitude, phase, phase difference, RMS and average value; notation i, v, I, V</th><td>AC: Waveform (Fig. 58)</td><td>II · CO2</td></tr>
+            <tr><th>Complex impedance; RL, RC, RLC series; power factor and power</th><td>AC: RL · RC · RLC (Fig. 59)</td><td>II · CO2</td></tr>
+            <tr><th>Resonance in series RLC</th><td>AC: Resonance (Fig. 60)</td><td>II · CO2</td></tr>
+            <tr><th>Three-phase star and delta; line and phase relations</th><td>AC: Three-phase (Fig. 61)</td><td>II · CO2</td></tr>
+            <tr><th>Mutual inductance, transformer working, turns ratio, transformer on DC, auto- and instrument transformers</th><td>Machines: Transformer (Fig. 62)</td><td>III · CO3</td></tr>
+            <tr><th>DC machines: principle, classification, starting, speed control, applications</th><td>Machines: DC motor (Fig. 63)</td><td>III · CO3</td></tr>
+            <tr><th>Single- and three-phase induction motors; AC motor applications</th><td>Machines: Induction motor (Fig. 64)</td><td>III · CO3</td></tr>
+            <tr><th>Fleming's left- and right-hand rules</th><td>Machines: Fleming's rules (Fig. 65)</td><td>III · CO3</td></tr>
+            <tr><th>PN junction diode working and characteristics</th><td>Semiconductors (Fig. 6, 7); Exp 3</td><td>IV · CO4</td></tr>
+            <tr><th>Zener diode; varactor diode</th><td>Semiconductors: Zener, Varactor (Fig. 66, 67)</td><td>IV · CO4</td></tr>
+            <tr><th>Logic gates</th><td>Logic: Gates (Fig. 21); Exp 4</td><td>IV · CO4</td></tr>
+            <tr><th>Testing of diode and BJT</th><td>Semiconductors: Switch &amp; testing (Fig. 9)</td><td>IV · CO4</td></tr>
+            <tr><th>Half wave, full wave and bridge rectifiers</th><td>Semiconductors: Rectifiers (Fig. 8)</td><td>IV · CO4</td></tr>
+            <tr><th>MOSFET representation and characteristics; applications of diodes, transistors, MOSFET</th><td>BJT &amp; MOSFET (Fig. 68, 69)</td><td>IV · CO4</td></tr>
+            <tr><th>Filters: low-, high-, band-pass, band-stop (active)</th><td>Op-amps: Filters (Fig. 73)</td><td>V · CO5</td></tr>
+            <tr><th>Op-amp properties, virtual ground</th><td>Op-amps: Properties (Fig. 70)</td><td>V · CO5</td></tr>
+            <tr><th>Inverting, non-inverting, adder, subtractor</th><td>Op-amps: Configurations (Fig. 71)</td><td>V · CO5</td></tr>
+            <tr><th>Integrator and differentiator</th><td>Op-amps: Integrator &amp; differentiator (Fig. 72)</td><td>V · CO5</td></tr>
+            <tr><th>Comparator and its use in anti-lock braking</th><td>Op-amps: Comparator &amp; ABS (Fig. 74)</td><td>V · CO5</td></tr>
+            <tr><th>Embedded systems; microprocessor vs microcontroller</th><td>Arduino: Embedded systems &amp; IoT (Fig. 16)</td><td>VI · CO6</td></tr>
+            <tr><th>Arduino and sensors</th><td>Arduino: Uno, Sensors (Fig. 13, 14); Exp 7</td><td>VI · CO6</td></tr>
+            <tr><th>IoT and cloud in plants, healthcare, agriculture, manufacturing, automobiles, smart grid</th><td>Arduino: Embedded systems &amp; IoT (Fig. 16)</td><td>VI · CO6</td></tr>
+        </tbody>
+    </table>
+    <h3>ECE131 course outcomes</h3>
+    <div class="co-cards">
+        <div class="co-card"><b>CO1</b>Enumerate the basic terminology of electrical and electronics engineering<em>DC basics, component gallery (Exp 1), properties tables on every device page</em></div>
+        <div class="co-card"><b>CO2</b>Understand the behaviour and notation of electrical circuits<em>DC circuits and AC circuits pages, Exp 2</em></div>
+        <div class="co-card"><b>CO3</b>Explain the principles and applications of electrical machines<em>Transformer, DC motor, induction motor, Fleming's rules</em></div>
+        <div class="co-card"><b>CO4</b>Determine the characteristics of semiconductor devices<em>Diode, Zener, varactor, BJT, MOSFET pages; Exp 3 measures a real characteristic</em></div>
+        <div class="co-card"><b>CO5</b>Analyse filters and operational amplifiers<em>Op-amp configurations, integrator, filters, comparator and ABS</em></div>
+        <div class="co-card"><b>CO6</b>Illustrate IoT, cloud and embedded systems in various fields<em>Arduino page and the three projects of Exp 7</em></div>
+    </div>
+    <figure class="fig-tall"><img src="images/map131.png" alt=""><figcaption><b>Fig. 75</b> · <b>The same mapping inside the site</b> (Course map, ECE131 tab): every row is a link to the page and tab.</figcaption></figure>
+</section>
+
+<!-- ============ 12 CODE ============ -->
+<section class="chapter">
+    <p class="kicker">12 · Code walkthrough</p>
+    <h2>How the important parts work</h2>
+    <h3>Gate-level simulation with delays</h3>
+    <div class="walk">
+        <pre><span class="file">logic.js · lines 47–57</span>step() {
+    const next = {};
+    let changed = false;
+    for (const g of this.gates) {
+        const v = OPS[g.type](g.in.map(sig =&gt; this.get(sig))) ? 1 : 0;
+        next[g.id] = v;
+        if (v !== this.values[g.id]) changed = true;
+    }
+    Object.assign(this.values, next);
+    return changed;
+}</pre>
+        <div>
+            <p>Every gate computes its new output from the values of the <i>previous</i> instant, then all outputs change together. That is one gate delay.</p>
+            <p>Combinational circuits settle after a few steps. A latch settles too, because its feedback loop reaches a stable state. A JK flip-flop with J = K = 1 and the clock high never settles: each step flips the output, which feeds back and flips it again. <code>settle()</code> reports that, and the page shows it as the race-around condition. Nothing about race-around is hard-coded; it comes out of the gate delays.</p>
+        </div>
+    </div>
+    <h3>A clean clock pulse for Experiment 6</h3>
+    <div class="walk">
+        <pre><span class="file">lab6.js · lines 23–27</span>function settleLatch(c) {
+    if (c.settle().stable) return;
+    for (let k = 0; k &lt; 4; k++) c.gates.forEach(g =&gt; { c.values[g.id] = OPS[g.type](g.in.map(sig =&gt; c.get(sig))) ? 1 : 0; });
+    c.settle();
+}</pre>
+        <div>
+            <p>A short pulse holds the clock high for two gate delays: long enough for the steering gate and the latch to change once, too short for the new output to come back round. Tests (chapter 13) confirm every J, K, Q combination gives the right next state.</p>
+            <p>If both latch outputs end up equal, a unit-delay model would oscillate for ever. Real gates are never exactly equal in speed, so the tie is broken with a few in-order passes, the same way the simulator does when a circuit is first built.</p>
+        </div>
+    </div>
+    <h3>The diode operating point</h3>
+    <div class="walk">
+        <pre><span class="file">lab3.js · lines 17–30</span>export function diodeReading(Vs, reverse) {
+    if (reverse) {
+        const I = (0.005 * (1 - Math.exp(-Vs)) + 0.0016 * Vs) * 1e-6; // nA–µA leakage
+        return { Vd: Math.max(0, Vs - I * R), I };
+    }
+    let lo = 0;
+    let hi = Math.max(0, Vs);
+    for (let k = 0; k &lt; 80; k++) {
+        const mid = (lo + hi) / 2;
+        if (mid + IS * (Math.exp(mid / (N * VT)) - 1) * R &gt; Vs) hi = mid; else lo = mid;
+    }
+    const Vd = (lo + hi) / 2;
+    return { Vd, I: (Vs - Vd) / R };
+}</pre>
+        <div>
+            <p>The current through the series resistor must equal the diode current from the Shockley equation. There is no closed-form answer, so the diode voltage is found by bisection: 80 halvings of the interval 0 to Vs, which is far more precise than the meter shows.</p>
+            <p>The ideality factor and saturation current (n ≈ 1.9, Is = 5 nA) put the knee of the simulated 1N4007 at about 0.6–0.7 V, like the real diode.</p>
+        </div>
+    </div>
+</section>
+
+<section class="chapter">
+    <p class="kicker">12 · Code walkthrough (continued)</p>
+    <h3>Nodal analysis for the two-source network</h3>
+    <div class="walk">
+        <pre><span class="file">dc.js · lines 13–19</span>export function solveNetwork({ V1, V2, R1, R2, R3 }) {
+    const VA = (V1 / R1 + V2 / R3) / (1 / R1 + 1 / R2 + 1 / R3);
+    const I1 = (V1 - VA) / R1; // left source → node A
+    const I3 = (V2 - VA) / R3; // right source → node A
+    const I2 = VA / R2; // node A → ground
+    return { VA, I1, I2, I3 };
+}</pre>
+        <div>
+            <p>Node A is the only unknown, so KCL at A gives one equation: the currents in from both sources equal the current down through R2. Solving it gives VA, and every branch current follows from Ohm's law.</p>
+            <p>The page then adds up the currents at the node and the voltages around each loop and prints the sums, which is how it demonstrates KCL and KVL.</p>
+        </div>
+    </div>
+    <h3>Series AC circuits</h3>
+    <div class="walk">
+        <pre><span class="file">ac.js · lines 65–74</span>export function seriesAC({ type, R, L, C, V, f }) {
+    const w = TAU * f;
+    const XL = type.includes(&#x27;L&#x27;) ? w * L : 0;
+    const XC = type.includes(&#x27;C&#x27;) ? 1 / (w * C) : 0;
+    const X = XL - XC;
+    const Z = Math.hypot(R, X);
+    const theta = Math.atan2(X, R);
+    const I = V / Z;
+    return { XL, XC, X, Z, theta, I, VR: I * R, VL: I * XL, VC: I * XC, pf: Math.cos(theta), P: V * I * Math.cos(theta), Q: V * I * Math.sin(theta), S: V * I };
+}</pre>
+        <div>
+            <p>Reactances come from ω = 2πf. The impedance is the magnitude of R + jX, and the phase angle its argument. Power factor, real, reactive and apparent power follow. The same function drives the phasor diagram and the resonance sweep.</p>
+        </div>
+    </div>
+    <h3>IC pinouts</h3>
+    <div class="walk">
+        <pre><span class="file">ic.js · lines 17–35</span>export function drawIC(part, used = {}) {
+    const ic = ICS[part];
+    const w = 420;
+    const els = [s(&#x27;rect&#x27;, { x: 60, y: 60, width: 300, height: 110, rx: 8, class: &#x27;ic-body&#x27; }), s(&#x27;path&#x27;, { d: &#x27;M60 100 a15 15 0 0 1 0 30&#x27;, class: &#x27;ic-notch&#x27; }),
+        s(&#x27;text&#x27;, { x: 210, y: 112, &#x27;text-anchor&#x27;: &#x27;middle&#x27;, class: &#x27;ic-name&#x27; }, `IC ${ic.name}`), s(&#x27;text&#x27;, { x: 210, y: 132, &#x27;text-anchor&#x27;: &#x27;middle&#x27;, class: &#x27;ic-title&#x27; }, ic.title)];
+    for (let p = 1; p &lt;= 14; p++) {
+        const bottom = p &lt;= 7;
+        const x = bottom ? 80 + (p - 1) * 43.3 : 80 + (14 - p) * 43.3;
+        const y = bottom ? 170 : 40;
+        const isUsed = used[p] !== undefined || p === 7 || p === 14;
+        const role = p === 7 ? &#x27;GND&#x27; : p === 14 ? &#x27;+5 V&#x27; : used[p];
+        els.push(
+            s(&#x27;rect&#x27;, { x: x - 9, y, width: 18, height: 20, rx: 2, class: `ic-pin${isUsed ? &#x27; is-used&#x27; : &#x27;&#x27;}${p === 14 ? &#x27; is-vcc&#x27; : &#x27;&#x27;}${p === 7 ? &#x27; is-gnd&#x27; : &#x27;&#x27;}` }),
+            s(&#x27;text&#x27;, { x, y: bottom ? 158 : 76, &#x27;text-anchor&#x27;: &#x27;middle&#x27;, class: &#x27;ic-pin-label&#x27; }, ic.pins[p]),
+            s(&#x27;text&#x27;, { x, y: bottom ? 205 : 33, &#x27;text-anchor&#x27;: &#x27;middle&#x27;, class: &#x27;ic-pin-num&#x27; }, String(p)));
+        if (role) els.push(s(&#x27;text&#x27;, { x, y: bottom ? 222 : 16, &#x27;text-anchor&#x27;: &#x27;middle&#x27;, class: &#x27;ic-role&#x27; }, role));
+    }
+    return s(&#x27;svg&#x27;, { viewBox: `0 0 ${w} 232`, class: &#x27;ic-svg&#x27;, role: &#x27;img&#x27;, &#x27;aria-label&#x27;: `IC ${ic.name} pinout` }, ...els);
+}</pre>
+        <div>
+            <p>One function draws any of the six TTL chips. Pins 1–7 run left to right along the bottom and 8–14 right to left along the top, as on a real DIP package seen from above with the notch on the left. Pins passed in <code>used</code> are highlighted and labelled with what they connect to; VCC and GND are always marked.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ============ 13 TESTING ============ -->
+<section class="chapter">
+    <p class="kicker">13 · Testing</p>
+    <h2>What was checked</h2>
+    <p class="lead">Three kinds of test were run: the models were checked against hand calculations and truth tables in Node.js, every page and tab was opened in a real browser to look for errors, and every experiment was carried out end to end through its buttons.</p>
+    <h3>1. Model tests (Node.js)</h3>
+    <table>
+        <thead><tr><th>What</th><th>Check</th><th>Result</th></tr></thead>
+        <tbody>
+            <tr><th>Two-source DC network</th><td>KCL at node A and KVL around the left loop, two sets of values</td><td class="ok">Pass</td></tr>
+            <tr><th>Experiment 2 T-network</th><td>Vs − VR1 − VR2 = 0 and I = I2 + I3 for Vs = 10 V</td><td class="ok">Pass</td></tr>
+            <tr><th>Series RLC at resonance</th><td>Z = R and power factor = 1 at f0 = 1/(2π√LC)</td><td class="ok">Pass</td></tr>
+            <tr><th>Op-amp</th><td>Inverting gain −10 gives −5 V for 0.5 V in; gain −100 saturates at −13.5 V</td><td class="ok">Pass</td></tr>
+            <tr><th>RC filters</th><td>Low-pass and high-pass gain = 0.707 at the cut-off frequency</td><td class="ok">Pass</td></tr>
+            <tr><th>Diode bench</th><td>Vd + I·R = Vs, and the forward drop at 1.7 V supply lies between 0.6 and 0.8 V</td><td class="ok">Pass</td></tr>
+            <tr><th>Full adder, full subtractor, 4:1 MUX</th><td>Every row of the simulated truth table compared with arithmetic (S + 2·Cout = A + B + Cin, etc.)</td><td class="ok">Pass</td></tr>
+            <tr><th>Six universal-gate circuits (Exp 4)</th><td>Every row compared with NOT, AND, OR</td><td class="ok">Pass</td></tr>
+            <tr><th>K-map minimisation</th><td>m(1, 3, 7, 11, 15) minimises to A'B'D + CD</td><td class="ok">Pass</td></tr>
+            <tr><th>JK flip-flop (Exp 6)</th><td>All 8 combinations of Q, J, K with a two-delay pulse give the expected next state with Q' = not Q</td><td class="ok">Pass</td></tr>
+            <tr><th>Race-around</th><td>J = K = 1 with the clock held high never settles</td><td class="ok">Pass</td></tr>
+        </tbody>
+    </table>
+    <p>124 individual checks, 124 passed.</p>
+    <h3>2. Every page in the browser</h3>
+    <p>An automated browser (Chromium via Playwright) opened all 22 pages and clicked through all 87 tabs, recording any JavaScript error or console error. Result: no errors. The screenshots were reviewed by eye, which found and fixed several problems: circuit labels overlapping symbols, a schematic cut off at the top when a gate sat above the first input, labels colliding at the end of the ABS graph, the diode's reverse current plotted on the same scale as its forward current, and the sticky top bar covering screenshots.</p>
+    <h3>3. Experiments end to end</h3>
+    <table>
+        <thead><tr><th>Experiment</th><th>Done through the bench</th><th>Result written by the page</th></tr></thead>
+        <tbody>
+            <tr><th>Exp 3</th><td>Full set of forward and reverse readings</td><td>Knee ≈ 0.60 V, static and dynamic resistance calculated</td></tr>
+            <tr><th>Exp 4</th><td>All six circuits, every input combination</td><td>All six truth tables verified</td></tr>
+            <tr><th>Exp 5</th><td>Half and full adder, every combination</td><td>Both truth tables verified</td></tr>
+            <tr><th>Exp 6</th><td>Set, hold, reset, toggle, toggle; then clock held high</td><td>Truth table verified; race-around recorded with the number of transitions</td></tr>
+            <tr><th>Exp 7</th><td>Two readings per project, one each side of the threshold</td><td>Output switched correctly at the threshold for all three projects</td></tr>
+        </tbody>
+    </table>
+    <figure class="fig-phone"><img src="images/mobile.png" alt=""><figcaption><b>Fig. 76</b> · <b>Phone width.</b> The sidebar collapses behind a menu button and the bench stacks vertically.</figcaption></figure>
+</section>
+
+<!-- ============ 14 DEPLOYMENT ============ -->
+<section class="chapter">
+    <p class="kicker">14 · Deployment and conclusion</p>
+    <h2>Online and what I learned</h2>
+    <h3>Deployment</h3>
+    <p>The code is in a public GitHub repository and served by GitHub Pages straight from the main branch. Because there is no build step, the files in the repository are exactly the files the browser loads.</p>
+    <table>
+        <tbody>
+            <tr><th>Live site</th><td><a href="https://lushadowx.github.io/ElectroBench/">https://lushadowx.github.io/ElectroBench/</a></td></tr>
+            <tr><th>Source code</th><td><a href="https://github.com/LuShadowX/ElectroBench">https://github.com/LuShadowX/ElectroBench</a></td></tr>
+            <tr><th>Run locally</th><td><code>python3 -m http.server 8000</code> in the project folder, then open <code>http://localhost:8000</code></td></tr>
+        </tbody>
+    </table>
+    <h3>What I learned</h3>
+    <ul>
+        <li><b>Writing the model forces you to understand the topic.</b> To make the diode bench give sensible readings I had to solve the diode and resistor together, which is exactly the load-line idea from Unit 1. To make the flip-flop toggle once per pulse I had to think about propagation delay, which is what race-around is really about.</li>
+        <li><b>Real readings are not perfect.</b> Adding resistor tolerance and meter noise to Experiment 2 made the KVL sums come out at a few millivolts instead of zero, which is what happens on the real bench and is worth discussing in the viva.</li>
+        <li><b>Pin numbers matter.</b> Drawing the 7402 made it obvious why circuits copied from a 7400 diagram fail: the NOR chip has its outputs on different pins.</li>
+        <li><b>The two syllabus versions overlap a lot.</b> Mapping ECE249 and ECE131 side by side showed that the newer course trades digital electronics for circuits, machines and op-amps, so both were built into one site.</li>
+    </ul>
+    <h3>Possible extensions</h3>
+    <ul>
+        <li>A drag-and-drop breadboard where the student places the chips and wires and the simulator checks the circuit.</li>
+        <li>Connecting a real Arduino over Web Serial so Experiment 7 can plot live sensor values.</li>
+        <li>Exporting the lab record as a filled lab-file template.</li>
+    </ul>
+</section>
+
+</body>
+</html>
