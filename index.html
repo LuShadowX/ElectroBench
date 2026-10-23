@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElectroBench | A virtual electrical and electronics lab</title>
+    <meta name="description" content="ElectroBench is a virtual electrical and electronics lab in the browser: circuit theorems, AC phasors, diodes, transistors, op-amps, logic gates, K-maps, flip-flops, counters, Arduino projects and seven lab experiments with a multimeter and oscilloscope.">
+    <meta name="theme-color" content="#0b1324">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+    <noscript><p style="padding:20px">ElectroBench is an interactive lab, so it needs JavaScript turned on.</p></noscript>
+    <div class="shell">
+        <aside class="side" id="side" aria-label="Topics">
+            <a class="brand" href="#/home">
+                <span class="brand__logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
+                <span><b>ElectroBench</b><small>VIRTUAL EEE LAB</small></span>
+            </a>
+            <nav id="nav"></nav>
+        </aside>
+        <div class="main">
+            <header class="topbar">
+                <button type="button" class="topbar__menu" id="menu-button" aria-controls="side" aria-expanded="false">☰ Topics</button>
+                <div class="crumbs" id="crumbs"></div>
+                <div class="topbar__tags" id="tags"></div>
+            </header>
+            <main class="page" id="page" tabindex="-1"></main>
+        </div>
+    </div>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
