@@ -16,9 +16,9 @@ export function render(page) {
                 h('div', { class: 'row' }, h('a', { class: 'btn', href: `#/${firstUnseen ? firstUnseen[0] : 'dc'}` }, firstUnseen && seen.size ? `Continue: ${firstUnseen[1]}` : 'Start with DC circuits'), h('a', { class: 'btn btn--ghost', href: '#/map' }, 'See the course map'))),
             h('div', { class: 'home-stats' }, ...[[String(topics.filter(([id]) => !id.startsWith('lab')).length), 'topic pages'], ['7', 'lab experiments'], ['3', 'courses mapped'], [`${topics.filter(([id]) => seen.has(id)).length}/${topics.length}`, 'opened by you']].map(([v, l]) => h('div', { class: 'stat' }, h('b', { class: 'mono' }, v), h('span', {}, l))))),
         h('div', { class: 'home-courses' },
-            ...[['ECE249', 'Basic Electrical & Electronics Engineering', 'Electrical laws, semiconductors, Arduino and sensors, number systems, logic, combinational and sequential circuits, counters.'],
+            ...[['ECE131', 'Basic Electrical & Electronics Engineering (2026-27)', 'DC circuits and theorems, AC and three-phase circuits, machines, semiconductor devices, op-amps and filters, embedded systems and IoT.'],
                 ['ECE279', 'Basic Electrical & Electronics Engineering Lab', 'Seven experiments, each with aim, theory, virtual bench, observation tables and viva questions.'],
-                ['ECE131', 'Basic Electrical & Electronics Engineering (2026-27)', 'Adds network theorems, AC and three-phase circuits, machines, MOSFET, op-amps, filters and IoT.']]
+                ['ECE249', 'Earlier syllabus of the same course', 'Also covered: number systems, logic gates, K-maps, combinational and sequential circuits, counters.']]
                 .map(([code, name, text]) => h('a', { class: 'card home-course', href: `#/map/${code.toLowerCase()}` }, h('span', { class: 'chip' }, code), h('h3', {}, name), h('p', {}, text)))),
         ...SECTIONS.slice(1).map(([group, items]) => h('section', { class: 'home-section' }, h('h3', {}, group),
             h('div', { class: 'home-grid' }, ...items.map(([id, title, sub]) => h('a', { class: `card home-card${seen.has(id) ? ' is-seen' : ''}`, href: `#/${id}` }, h('b', {}, title), h('small', {}, sub)))))));

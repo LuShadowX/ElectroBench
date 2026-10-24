@@ -116,7 +116,7 @@ function tagsFor(id) {
     const map = {
         dc: ['ECE131 U-I', 'ECE249 U-1', 'Lab 2'], ac: ['ECE131 U-II'], machines: ['ECE131 U-III'],
         semis: ['ECE131 U-IV', 'ECE249 U-1', 'Lab 3'], transistors: ['ECE131 U-IV', 'ECE249 U-1'], opamp: ['ECE131 U-V'],
-        arduino: ['ECE131 U-VI', 'ECE249 U-2', 'Lab 7'], numbers: ['ECE249 U-3'], logic: ['ECE249 U-3', 'ECE131 U-IV', 'Lab 4'],
+        arduino: ['ECE131 U-VI', 'ECE249 U-2', 'Lab 7'], numbers: ['ECE249 U-3'], logic: ['ECE131 U-IV', 'ECE249 U-3', 'Lab 4'],
         combinational: ['ECE249 U-4', 'Lab 5'], sequential: ['ECE249 U-5', 'Lab 6'], counters: ['ECE249 U-6'],
         lab1: ['ECE279'], lab2: ['ECE279'], lab3: ['ECE279'], lab4: ['ECE279'], lab5: ['ECE279'], lab6: ['ECE279'], lab7: ['ECE279'], record: ['ECE279']
     };

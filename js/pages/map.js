@@ -1,4 +1,4 @@
-// Course map: every syllabus topic of ECE249, ECE279 and ECE131 linked to the page and tab that covers it.
+// Course map: every syllabus topic of ECE131, ECE279 and ECE249 linked to the page and tab that covers it.
 
 import { h, note } from '../core/ui.js';
 import { pageTabs, head } from '../core/page.js';
@@ -108,7 +108,7 @@ export const ECE131 = [
 const links = (list) => h('span', { class: 'map-links' }, ...list.flatMap(([to, text], i) => (i ? [' · ', L(to, text)] : [L(to, text)])));
 
 function ece249(panel) {
-    panel.append(head('ECE249 · Basic Electrical and Electronics Engineering', 'Six units. Each row is a topic from the syllabus and the place in ElectroBench where it is built.'),
+    panel.append(head('ECE249 · Basic Electrical and Electronics Engineering (earlier syllabus)', 'The earlier version of the course, with more digital electronics. Each row is a topic from its unit notes and the place in ElectroBench where it is built.'),
         ...ECE249.map(([unit, rows]) => h('div', { class: 'card map-unit' }, h('h3', {}, unit),
             h('table', { class: 'data' }, h('thead', {}, h('tr', {}, h('th', {}, 'Syllabus topic'), h('th', {}, 'Where'), h('th', {}, 'What you can do there'))),
                 h('tbody', {}, ...rows.map(([topic, where, what]) => h('tr', {}, h('td', {}, topic), h('td', {}, links(where)), h('td', {}, what))))))));
@@ -122,7 +122,7 @@ function ece279(panel) {
 }
 
 function ece131(panel) {
-    panel.append(head('ECE131 · Basic Electrical and Electronics Engineering (2026-27)', 'The newer version of the course. Units I–III and V go further into circuits, machines and op-amps; IV and VI overlap with ECE249.'),
+    panel.append(head('ECE131 · Basic Electrical and Electronics Engineering (2026-27)', 'All six units of the current syllabus. Each row is a line from the syllabus and the page and tab that covers it; the chip next to each unit is its course outcome.'),
         ...ECE131.map(([unit, co, rows]) => h('div', { class: 'card map-unit' }, h('div', { class: 'row' }, h('h3', {}, unit), h('span', { class: 'chip' }, co)),
             h('table', { class: 'data' }, h('thead', {}, h('tr', {}, h('th', {}, 'Syllabus topic'), h('th', {}, 'Where'))),
                 h('tbody', {}, ...rows.map(([topic, where]) => h('tr', {}, h('td', {}, topic), h('td', {}, links(where)))))))),
@@ -132,8 +132,8 @@ function ece131(panel) {
 
 export function render(page, { tab }) {
     return pageTabs(page, 'map', [
-        { id: 'ece249', label: 'ECE249 theory', render: ece249 },
+        { id: 'ece131', label: 'ECE131 (2026-27)', render: ece131 },
         { id: 'ece279', label: 'ECE279 lab', render: ece279 },
-        { id: 'ece131', label: 'ECE131 (2026-27)', render: ece131 }
+        { id: 'ece249', label: 'ECE249 (earlier syllabus)', render: ece249 }
     ], tab);
 }

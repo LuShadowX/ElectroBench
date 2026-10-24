@@ -3,6 +3,8 @@
 An interactive workbench for basic electrical and electronics engineering. Every page is a working model: change a resistor and the mesh currents change, move the supply and the diode curve fills in, click a switch and a gate-level flip-flop toggles. The lab experiments have a virtual bench with instruments, and the readings you take fill in the observation tables of a printable lab record.
 
 **Live:** https://lushadowx.github.io/ElectroBench/
+**Courses:** ECE131 Basic Electrical and Electronics Engineering (2026-27), with the ECE279 lab experiments and the earlier ECE249 syllabus also covered.
+
 **Project report (PDF):** [docs/ElectroBench_Report.pdf](docs/ElectroBench_Report.pdf)
 
 Built with plain HTML, CSS and JavaScript (ES modules). No frameworks, no build step, no server.
@@ -19,7 +21,7 @@ Built with plain HTML, CSS and JavaScript (ES modules). No frameworks, no build 
 
 Each experiment has four tabs: aim and theory, virtual bench, observations and result, and viva questions. The **Lab record** page collects all of them into one printable file.
 
-The **Course map** links every syllabus topic of ECE249, ECE279 and ECE131 to the page and tab that covers it.
+The **Course map** links every syllabus topic of ECE131, ECE279 and ECE249 to the page and tab that covers it.
 
 ## Run it locally
 
